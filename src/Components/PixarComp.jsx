@@ -1,0 +1,63 @@
+import React from 'react'
+import styled from 'styled-components'
+import PIXAR from '../videos/pixar2.mp4'
+import { useEffect, useState } from 'react'
+import Movies from './Movies'
+import firebase from '../Firebase';
+
+const PixarComp = () => {
+    const ref = firebase.firestore().collection("disney_plus_movies")
+    const ref2 = firebase.firestore().collection("disney_plus_originals")
+    const ref3 = firebase.firestore().collection("Pixar_Movies")
+
+    const [disneyMovies, setDisneyMovies] = useState([])
+    const [recommandMovies, setRecommandMovies] = useState([])
+    const [PixarMovies, setPixarMovies] = useState([])
+
+    useEffect(() => {
+        const getCardsData = () => {
+            ref.get().then((item) => {
+                setRecommandMovies(item.docs.map((doc) => doc.data()))
+            })
+            ref2.get().then((item) => {
+                setDisneyMovies(item.docs.map((doc) => doc.data()))
+            })
+            ref3.get().then((item) => {
+                setPixarMovies(item.docs.map((doc) => doc.data()))
+            })
+        }
+        getCardsData()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+    return (
+        <>
+            <VideoContainer>
+                <video src={PIXAR} autoPlay="autoplay" muted playsInline>
+                </video>
+            </VideoContainer>
+            
+            <MoviesContainer style={{ paddingTop: "30px" }}>
+                <Movies title={"Originals"} Movies={recommandMovies} />
+                <Movies title={"Pixar Movies"} Movies={disneyMovies} />
+                <Movies title={"Pixar Through The Years"} Movies={PixarMovies} />
+            </MoviesContainer>
+        </>
+    )
+}
+
+const VideoContainer = styled.div`
+    video{
+        height: 100%;
+        width: 100%;
+        max-height: 500px;
+        background-color: #192133;
+        animation: mymove 3s infinite alternate-reverse;
+            @keyframes mymove { 
+              0% {background-color:#192133}
+              60% {background-color:#1e2841} 
+              100% {background-color:#19243d} 
+            }
+    }
+`
+const MoviesContainer = styled.div``
+export default PixarComp
